@@ -1,0 +1,5 @@
+recursive-include src
+include main.py
+recursive-exclude output
+exclude setup.py
+

@@ -266,7 +266,7 @@ class FinSheetsHandler(ExcelHandler):
         ws["G2"]=res1["price"]
 
         date=datetime.datetime.now().date()
-        ws["G3"]="=DATEVALUE(\"{}/{}/{}\")".format(date.month, date.day, date.year)
+        ws["G3"]="=DATE({},{},{})".format(date.year, date.month, date.day)
 
         StyleHandler.styleSheetConstantCols(ws, mode="profile", styles=self.styles)
         self.writeList(ws, Constants.PROFILE_ROW_NAMES, isDic=False, startRow=5, column="B")

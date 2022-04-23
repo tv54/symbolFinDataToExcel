@@ -90,7 +90,7 @@ class StyleHandler():
                 if(writeValue):
                     try:
                         date=datetime.datetime.strptime(writeValue, "%Y-%m-%d")
-                        return "=DATEVALUE(\"{}/{}/{}\")".format(date.month, date.day, date.year)
+                        return "=DATE({},{},{})".format(date.year, date.month, date.day)
                     except:
                         # input(writeValue)
                         pass

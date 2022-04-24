@@ -1,0 +1,51 @@
+
+---------------------------2022-04-23 12:35:00.439141---------------------------
+
+Menu principal: (enter: 1)
+	1. Iniciar aplicación
+	2. Cerrar
+Selección: 
+1
+
+Activo a buscar: 
+AAPL
+AAPL || 
+Benchmark: (enter: 1)
+	1. S&P500
+	2. NASDAQ
+	3. Sin benchmark
+Selección: 
+
+AAPL || S&P500 || 
+Precio a usar: (enter: 1)
+	1. close
+	2. open
+Selección: 
+
+AAPL || S&P500 || close || 
+Datos históricos diarios hasta fecha (d/m/a) (enter: hoy): 
+
+AAPL || S&P500 || close || 2022-04-23 || 
+Datos históricos diarios desde fecha (d/m/a) o cantidad de años (max 5) (enter: 5 años): 
+
+AAPL || S&P500 || close || 2022-04-23 || 2017-04-23 || 
+Nombre del excel (enter: AAPL.xlsx): 
+
+AAPL || S&P500 || close || 2022-04-23 || 2017-04-23 || AAPL.xlsx || 
+
+Envíando petición de precios historicos del benchmark S&P500...
+Petición exitosa
+Envíando petición de perfil del activo AAPL...
+Petición exitosa
+Envíando petición de indicadores financieros del activo AAPL...
+Petición exitosa
+Envíando petición de precios historicos del activo AAPL...
+Petición exitosa
+Envíando petición de cfs del activo AAPL...
+Petición exitosa
+Envíando petición de bss del activo AAPL...
+Petición exitosa
+Envíando petición de is del activo AAPL...
+Petición exitosa
+Guardando Excel ./output/AAPL.xlsx...
+Guardando exitoso

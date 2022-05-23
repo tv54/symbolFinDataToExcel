@@ -2,7 +2,7 @@ import datetime
 from openpyxl.styles import Alignment
 from openpyxl.chart.reference import Reference
 from openpyxl.worksheet.dimensions import SheetFormatProperties, ColumnDimension
-from src.package.subpackage.othersrc.Constants import Constants
+import src.package.subpackage.othersrc.Constants as Constants
 from src.package.subpackage.handlers.StyleHandler import StyleHandler
 from src.package.subpackage.othersrc.genFunc import checkKeyInDict
 from src.package.subpackage.handlers.ExcelHandler import ExcelHandler
@@ -245,8 +245,13 @@ class FinSheetsHandler(ExcelHandler):
 
         self.chart(ws, column1="A", column2=Constants.COLUMN_NAMES[limit], row1=17, row2=1, title="Evolución del EBITDA", chartCoords="{}2".format(Constants.COLUMN_NAMES[limit+2]), lineMarkers=True, horizontalData=True)
         self.chart(ws, column1="A", column2=Constants.COLUMN_NAMES[limit], row1=3, row2=1, title="Evolución Ingresos totales y Resultado neto", horizontalData=True, chartCoords="{}22".format(Constants.COLUMN_NAMES[limit+2]), chartType="bar", extraElemReferences=[Reference(ws, min_col=1, max_col=limit+1, min_row=14)])
+        
         if(checkKeyInDict(self.wb, "Datos {}".format(sym), False)):
-            self.chart(ws, column1="A", column2=Constants.COLUMN_NAMES[limit], row1=3, row2=1, title="Evolución Ingresos totales y Resultado neto", horizontalData=True, chartCoords="", chartType="bar", extraElemReferences=[Reference(ws, min_col=1, max_col=limit+1, min_row=14)], secondWs=self.wb["Datos {}".format(sym)], secondWsChartCoords="I22")
+            if(Constants.ENABLE_SUMMARY_SHEET):
+                secondWsChartCoords="I22"
+            else:
+                secondWsChartCoords="I2"
+            self.chart(ws, column1="A", column2=Constants.COLUMN_NAMES[limit], row1=3, row2=1, title="Evolución Ingresos totales y Resultado neto", horizontalData=True, chartCoords="", chartType="bar", extraElemReferences=[Reference(ws, min_col=1, max_col=limit+1, min_row=14)], secondWs=self.wb["Datos {}".format(sym)], secondWsChartCoords=secondWsChartCoords)
 
     def summarySheetBuilder(self, sym, res1, res2):
         if(not checkKeyInDict(self.wb, "Sheet", False)):

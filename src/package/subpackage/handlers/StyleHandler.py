@@ -1,7 +1,7 @@
 import datetime
 from openpyxl.styles import Font, Alignment
 from openpyxl.chart.axis import DateAxis
-from src.package.subpackage.othersrc.Constants import Constants
+import src.package.subpackage.othersrc.Constants as Constants
 
 class StyleHandler():
     

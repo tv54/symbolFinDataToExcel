@@ -1,7 +1,7 @@
 from openpyxl import Workbook
 from openpyxl.styles import NamedStyle, Font, Border, Side, Alignment, PatternFill
 from src.package.subpackage.handlers.ChartingHandler import ChartingHandler
-from src.package.subpackage.othersrc.Constants import Constants
+import src.package.subpackage.othersrc.Constants as Constants
 from src.package.subpackage.handlers.StyleHandler import StyleHandler
 from src.package.subpackage.othersrc.genFunc import checkKeyInDict, handleError, handleInput, log, displayLine
 
@@ -84,20 +84,17 @@ class ExcelHandler(ChartingHandler):
             self.wb.remove("Sheet")
         log("Saving workbook {}".format(wbName))
         try:
-            displayLine("Guardando Excel {}...".format(wbName), self.logFile)
+            displayLine("Guardando Excel {}...".format(wbName))
             self.wb.save(wbName)
-            displayLine("Guardando exitoso", self.logFile)
+            displayLine("Guardando exitoso")
         except:
-            handleError("Acceso al archivo {} denegado".format(wbName), self.logFile)
-            userIn=handleInput("Nuevo nombre del Excel (enter para el mismo): ", self.logFile)
+            handleError("Acceso al archivo {} denegado".format(wbName))
+            userIn=handleInput("Nuevo nombre del Excel (enter para el mismo): ")
             if(userIn):
                 if(not userIn.__contains__(".")):
                     userIn += ".xlsx"
                 return self.saveWorkbook("./" + Constants.OUTPUT_FOLDER + "/" + userIn)
             else:
                 return self.saveWorkbook(wbName)
-
-        if(self.logFile):
-            self.logFile.close()
 
 

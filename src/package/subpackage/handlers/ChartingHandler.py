@@ -2,7 +2,7 @@ from openpyxl.chart.reference import Reference
 from openpyxl.chart.line_chart import LineChart
 from openpyxl.chart.bar_chart import BarChart
 from openpyxl.chart.axis import DateAxis
-from src.package.subpackage.othersrc.Constants import Constants
+import src.package.subpackage.othersrc.Constants as Constants
 from src.package.subpackage.handlers.StyleHandler import StyleHandler
 
 class ChartingHandler():
@@ -56,6 +56,24 @@ class ChartingHandler():
                 secondWs=None,
                 secondWsChartCoords="A1"
                 ):
+        """Add chart to worksheet
+
+        Args:
+            chartType (str, optional): 'line' or 'bar'. Defaults to "line".
+            column1 (str, optional): Column of first point of data. Defaults to "A".
+            column2 (str, optional): Column of last point of data (none if data selection is vertical). Defaults to "B".
+            row1 (int, optional): Row number of first point of data. Defaults to 1.
+            row2 (int, optional): Row number of last point of data (none if data selection is vertical). Defaults to 2.
+            title (str, optional): Chart title. Defaults to "".
+            titlesFromData (bool, optional): Get axis titles from data. Defaults to True.
+            chartCoords (str, optional): '<column><row>'. Defaults to "".
+            benchmarkCol (str, optional): Benchmark data as second function. Defaults to "".
+            secondAxis (bool, optional): Secondary Y axis. Defaults to False.
+            extraElemReferences (Reference, optional): Array of references for extra data. Defaults to None.
+            yearOnly (bool, optional): Display date as 'yyyy'. Defaults to False.
+            secondWs (Worksheet, optional): Second worksheet to add the chart to. Defaults to None.
+            secondWsChartCoords (str, optional): '<column><row>'. Defaults to "A1".
+        """
 
         match chartType:
             case "line":

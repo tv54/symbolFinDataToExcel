@@ -1,28 +1,32 @@
 from os import makedirs
 from sys import exit
 import datetime
-from src.package.subpackage.othersrc.Constants import Constants
+import src.package.subpackage.othersrc.Constants as Constants
 
-def handleError(error, logFile=None):
+def handleError(error):
     formattedLine="Error received '{}'. Continue? (y,n): ".format(error)
-    userIn=handleInput(formattedLine, logFile=logFile)
+    userIn=handleInput(formattedLine)
     match userIn.lower():
         case 'y':
             return
         case 'n':
-            try:
-                logFile.close()
-            except:
-                pass
             exitProgram()
-    handleError(error, logFile)
+    handleError(error)
 
 def exitProgram():
+    try:
+        Constants.DISPLAYED_LINES_FILE.close()
+        Constants.LOG_FILE.close()
+    except:
+        pass
     exit()
 
 def readFile(filename):
-    with open(filename, "r") as file:
-        return file.read()
+    try:
+        with open(filename, "r") as file:
+            return file.read()
+    except:
+        return None
 
 def checkKeyInDict(dict, key, defaultValue=0):
     if(key in dict):
@@ -30,8 +34,9 @@ def checkKeyInDict(dict, key, defaultValue=0):
 
     return defaultValue
 
-def displayLine(line, file=None, printLine=True, addLineBreak=True):
+def displayLine(line, printLine=True, addLineBreak=True):
     printLine and print(line)
+    file=Constants.DISPLAYED_LINES_FILE
     if(file):
         try:
             if(addLineBreak):
@@ -44,25 +49,25 @@ def displayLine(line, file=None, printLine=True, addLineBreak=True):
 
 def openDisplayedLinesFile():
     try:
-        file=open("./" + Constants.OUTPUT_FOLDER + "/" + Constants.DISPLAYED_LINES_FILE, "w")
+        file=open("./" + Constants.OUTPUT_FOLDER + "/" + Constants.DISPLAYED_LINES_FILE_NAME, "w")
         file.write("\n---------------------------{}---------------------------\n".format(datetime.datetime.now()))
     except:
-        file=0
+        file=None
     
-    return file
+    Constants.DISPLAYED_LINES_FILE=file
 
 def log(data):
-    if (Constants.LOG_DATA):
+    if(Constants.LOG_DATA):
         try:
-            with open("./" + Constants.OUTPUT_FOLDER + "/" + Constants.LOG_FILE, "a") as logFile:
+            with open("./" + Constants.OUTPUT_FOLDER + "/" + Constants.LOG_FILE_NAME, "a") as logFile:
                 logFile.write("{}\n".format(str(data)))
         except:
             pass
 
-def handleInput(inputText, logFile=None):
-    displayLine(inputText, file=logFile, printLine=False)
+def handleInput(inputText):
+    displayLine(inputText, printLine=False)
     userInput=input(inputText)
-    displayLine(userInput, file=logFile, printLine=False)
+    displayLine(userInput, printLine=False)
     return userInput
 
 def createDir(dirName):

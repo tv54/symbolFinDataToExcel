@@ -2,24 +2,21 @@ from sys import stdout
 from os import system
 from datetime import date, datetime
 from src.package.subpackage.othersrc.SearchData import SearchData
-from src.package.subpackage.othersrc.Constants import Constants
-from src.package.subpackage.othersrc.genFunc import exitProgram, handleInput, displayLine, exitProgram
+import src.package.subpackage.othersrc.Constants as Constants
+from src.package.subpackage.othersrc.genFunc import exitProgram, handleInput, displayLine, exitProgram, readFile
 
 class MenuHandler():
 
-    def __init__(self, logFile=None):
-        self.logFile=logFile
-
     def __printListWithInput(self, listDescriptor, selectionList, listItemPrefix="", lastItemNoPrefix=True):
         userIn = 0
-        displayLine(listDescriptor + " (enter: 1)", self.logFile, printLine=True, addLineBreak=True)
+        displayLine(listDescriptor + " (enter: 1)", printLine=True, addLineBreak=True)
         for i in range(len(selectionList)):
             if(i==len(selectionList)-1 and lastItemNoPrefix):
                 listItemPrefix=""
-            displayLine("\t{}. {}{}".format(i+1, listItemPrefix, selectionList[i]), self.logFile, printLine=True, addLineBreak=True)
+            displayLine("\t{}. {}{}".format(i+1, listItemPrefix, selectionList[i]), printLine=True, addLineBreak=True)
         
         while(not type(userIn)==int or userIn>len(selectionList)+1 or userIn<1):
-            userIn=handleInput("Selección: ", logFile=self.logFile)
+            userIn=handleInput("Selección: ")
             if(not userIn):
                 userIn=1
             else:
@@ -35,10 +32,10 @@ class MenuHandler():
         system("cls")
         for data in searchData:
             searchDataHeader += "{} || ".format(data)
-        displayLine(searchDataHeader, self.logFile, printLine=searchDataHeader)
+        displayLine(searchDataHeader, printLine=searchDataHeader)
 
     def __optionsMenu(self, selectedItemNumber=""):
-        displayLine("No habilitado", self.logFile)
+        displayLine("No habilitado")
 
     def __dateValidator(self, dateToValidate, validateInputString=True, toDate=""):
         if(validateInputString):
@@ -67,19 +64,39 @@ class MenuHandler():
         return dataArr
 
     def __mainProgMenu(self):
-        sym=""
+        symList=[]
         benchmark=""
         priceToDisplay=""
         toDate=""
         fromDate=""
         limit=0
         outputExcelName=""
-        # ---- sym ----
-        while(not sym):
-            sym=handleInput("Activo a buscar: ", logFile=self.logFile).upper()
-        self.__clearConsole(self.__buildDataArr(sym, benchmark, priceToDisplay, toDate, fromDate, outputExcelName))
-        
+        # ---- sym or list ----
+        selectionList=["Escribir activo", "Lista de activos"]
+        self.__clearConsole()
+        userIn=self.__printListWithInput("Selección de activos:", selectionList)
+        self.__clearConsole()
+        match selectionList[userIn-1]:
+            case "Escribir activo":
+                sym=""
+                while(not sym):
+                    sym=handleInput("Activo a buscar: ").upper()
+                symList.append(sym)
+            case "Lista de activos":
+                while(not symList):
+                    userIn=input("Nombre del archivo con la lista (enter: 'symList.txt'): ")
+                    if(not userIn):
+                        userIn="./symList.txt"
+                    elif(not userIn.__contains__(".")):
+                        userIn+=".txt"
+                        
+                    listContent=readFile(f"./{userIn}")
+                    if(listContent):
+                        symList=listContent.split("\n")
+                        sym=f"[{symList[0]}...]"
+                
         # ---- benchmark ----
+        self.__clearConsole(self.__buildDataArr(sym, benchmark, priceToDisplay, toDate, fromDate, outputExcelName))
         selectionList=["S&P500", "NASDAQ", "Sin benchmark"]
         userIn=self.__printListWithInput("Benchmark:", selectionList)
         if(selectionList[userIn-1]!="Sin benchmark"):
@@ -94,7 +111,7 @@ class MenuHandler():
         
         # ---- toDate ----
         while(not toDate):
-            toDate=handleInput("Datos históricos diarios hasta fecha (d/m/a) (enter: hoy): ", logFile=self.logFile)
+            toDate=handleInput("Datos históricos diarios hasta fecha (d/m/a) (enter: hoy): ")
             if(not toDate.strip()):
                 toDate = datetime.now().date()
             else:
@@ -103,7 +120,7 @@ class MenuHandler():
         
         # ---- fromDate ----
         while(not fromDate):
-            fromDate=handleInput("Datos históricos diarios desde fecha (d/m/a) o cantidad de años (max 5) (enter: 5 años): ", logFile=self.logFile)
+            fromDate=handleInput("Datos históricos diarios desde fecha (d/m/a) o cantidad de años (max 5) (enter: 5 años): ")
             if(not fromDate.strip()):
                 fromDate=date(toDate.year-5, datetime.now().month, datetime.now().day)
             else:
@@ -120,15 +137,16 @@ class MenuHandler():
             limit=5
         
         # ---- outputExcelName ----
-        outputExcelName=handleInput("Nombre del excel (enter: {}.xlsx): ".format(sym), logFile=self.logFile)
-        if(not outputExcelName):
-            outputExcelName="{}.xlsx".format(sym)
-        else:
-            if(not outputExcelName.__contains__(".")):
-                outputExcelName += ".xlsx"
-        self.__clearConsole(self.__buildDataArr(sym, benchmark, priceToDisplay, toDate, fromDate, outputExcelName))
+        if(not symList):
+            outputExcelName=handleInput("Nombre del excel (enter: {}.xlsx): ".format(sym))
+            if(not outputExcelName):
+                outputExcelName="{}.xlsx".format(sym)
+            else:
+                if(not outputExcelName.__contains__(".")):
+                    outputExcelName += ".xlsx"
+            self.__clearConsole(self.__buildDataArr(sym, benchmark, priceToDisplay, toDate, fromDate, outputExcelName))
         
-        return SearchData(sym, benchmark, toDate, fromDate, limit, outputExcelName, priceToDisplay=priceToDisplay)
+        return SearchData(symList, benchmark, toDate, fromDate, limit, outputExcelName, priceToDisplay=priceToDisplay)
 
     def mainMenu(self):
         selectionList=["Iniciar aplicación", "Cerrar"]
